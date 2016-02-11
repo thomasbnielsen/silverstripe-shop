@@ -1,5 +1,5 @@
 ---
-Name: myapp
+Name: app
 After: shop/config#shopconfig
 ---
 Email:
