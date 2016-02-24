@@ -69,7 +69,17 @@ class OrderProcessor
             return false;
         }
 
+		// make payment with authorize service instead of direct purchase
+		$service = AuthorizeCaptureService::create($payment)
+			->setReturnUrl($this->getReturnUrl());
+
+		// authorize the money, create the order
+		$response = $service->authorize($this->getGatewayData($gatewaydata));
+		$this->placeOrder();
+		// response will be a PurchaseResponse
+
         // Create a purchase service, and set the user-facing success URL for redirects
+/*
         $service = PurchaseService::create($payment)
             ->setReturnUrl($this->getReturnUrl());
 
@@ -81,8 +91,10 @@ class OrderProcessor
         } elseif ($response->isSuccessful()) {
             $this->completePayment();
         }
+*/
         return $response;
     }
+
 
     /**
      * Map shop data to omnipay fields
