@@ -55,6 +55,50 @@ class OrderProcessor
     {
         return $this->order->Link();
     }
+    
+    /**
+     * Create a payment model, and provide link to redirect to external gateway,
+     * or redirect to order link.
+     *
+     * @return string - url for redirection after payment has been made
+     */
+    public function makePayment($gateway, $gatewaydata = array())
+    {
+        //create payment
+        $payment = $this->createPayment($gateway);
+        if (!$payment) {
+            //errors have been stored.
+            return false;
+        }
+
+		// make payment with authorize service instead of direct purchase
+		$service = AuthorizeCaptureService::create($payment)
+			->setReturnUrl($this->getReturnUrl());
+
+		// authorize the money, create the order
+		$response = $service->authorize($this->getGatewayData($gatewaydata));
+		if (GatewayInfo::is_manual($gateway) || $response->isSuccessful()) {
+			//don't complete the order at this stage, if payment is manual
+			$this->placeOrder();
+		}
+
+        // Create a purchase service, and set the user-facing success URL for redirects
+/*
+        $service = PurchaseService::create($payment)
+            ->setReturnUrl($this->getReturnUrl());
+
+        // Process payment, get the result back
+        $response = $service->purchase($this->getGatewayData($gatewaydata));
+        if (GatewayInfo::is_manual($gateway)) {
+            //don't complete the payment at this stage, if payment is manual
+            $this->placeOrder();
+        } elseif ($response->isSuccessful()) {
+            $this->completePayment();
+        }
+*/
+        return $response;
+    }
+    
 
     /**
      * Map shop data to omnipay fields
