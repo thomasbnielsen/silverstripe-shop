@@ -57,36 +57,6 @@ class OrderProcessor
     }
 
     /**
-     * Create a payment model, and provide link to redirect to external gateway,
-     * or redirect to order link.
-     *
-     * @return string - url for redirection after payment has been made
-     */
-    public function makePayment($gateway, $gatewaydata = array())
-    {
-        //create payment
-        $payment = $this->createPayment($gateway);
-        if (!$payment) {
-            //errors have been stored.
-            return false;
-        }
-
-        // Create a purchase service, and set the user-facing success URL for redirects
-        $service = PurchaseService::create($payment)
-            ->setReturnUrl($this->getReturnUrl());
-
-        // Process payment, get the result back
-        $response = $service->purchase($this->getGatewayData($gatewaydata));
-        if (GatewayInfo::is_manual($gateway)) {
-            //don't complete the payment at this stage, if payment is manual
-            $this->placeOrder();
-        } elseif ($response->isSuccessful()) {
-            $this->completePayment();
-        }
-        return $response;
-    }
-
-    /**
      * Map shop data to omnipay fields
      *
      * @param array $customData Usually user submitted data.
@@ -98,10 +68,16 @@ class OrderProcessor
         $shipping = $this->order->getShippingAddress();
         $billing = $this->order->getBillingAddress();
 
+		$numPayments = Payment::get()
+			->where(array('"OrderID" = ?' => $this->order->ID))
+			->count();
+
+		$numPayments--;
+
         return array_merge(
             $customData,
             array(
-                'transactionId'    => $this->order->Reference,
+				'transactionId' => $this->order->Reference . ($numPayments > 0 ? '-' . $numPayments : ''),
                 'firstName'        => $this->order->FirstName,
                 'lastName'         => $this->order->Surname,
                 'email'            => $this->order->Email,
