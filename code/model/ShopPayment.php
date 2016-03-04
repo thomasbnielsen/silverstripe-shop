@@ -38,7 +38,11 @@ class ShopPayment extends DataExtension
 
 	public function onRefund($response)
 	{
-		// do stuff
+		$order = $this->owner->Order();
+		if ($order->exists()) {
+			$order->Status = 'AdminCancelled';
+			$order->write();
+		}
 	}
     
 }
