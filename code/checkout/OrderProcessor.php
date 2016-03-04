@@ -121,7 +121,7 @@ class OrderProcessor
         return array_merge(
             $customData,
             array(
-				'transactionId' => $this->order->Reference . ($numPayments > 0 ? '-' . $numPayments : ''),
+				'transactionId' => $this->order->Reference . ($numPayments > 0 ? '-' . $numPayments : '') . (Member::currentUser() ? '-' . Member::currentUserID() : ''),
                 'firstName'        => $this->order->FirstName,
                 'lastName'         => $this->order->Surname,
                 'email'            => $this->order->Email,
