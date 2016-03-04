@@ -26,5 +26,19 @@ class ShopPayment extends DataExtension
 			OrderProcessor::create($order)->placeOrder();
 		}
 	}
+	
+		public function onVoid($response)
+	{
+		$order = $this->owner->Order();
+		if ($order->exists()) {
+			$order->Status = 'AdminCancelled';
+			$order->write();
+		}
+	}
+
+	public function onRefund($response)
+	{
+		// do stuff
+	}
     
 }
