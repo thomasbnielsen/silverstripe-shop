@@ -21,6 +21,10 @@ class ShopPayment extends DataExtension
     
     public function onAuthorized($response)
 	{
+	}
+
+	public function onPendingAuthorize($response)
+	{
 		$order = $this->owner->Order();
 		if ($order->exists()) {
 			OrderProcessor::create($order)->placeOrder();
