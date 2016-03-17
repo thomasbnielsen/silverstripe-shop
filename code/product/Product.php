@@ -89,6 +89,8 @@ class Product extends Page implements Buyable
     private static $order_item             = "Product_OrderItem";
 
     private static $min_opengraph_img_size = 0;
+    
+    private static $vat_applies	   = true;
 
     // Physical Measurement
     private static $weight_unit = "kg";
