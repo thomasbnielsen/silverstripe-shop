@@ -487,6 +487,13 @@ class Product extends Page implements Buyable
     {
         return ShoppingCart_Controller::remove_all_item_link($this);
     }
+    
+	/**
+	 * @return Boolean
+	 */
+	public function hasVatApplied(){
+		return self::config()->vat_applies;
+	}
 }
 
 class Product_Controller extends Page_Controller
