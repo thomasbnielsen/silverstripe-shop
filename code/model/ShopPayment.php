@@ -11,14 +11,13 @@ class ShopPayment extends DataExtension
         'Order' => 'Order',
     );
 
-	// completePayment() does among other things send the receipt email
-	// this is not good when we do partial capturing
+	// disable this because we call it at a point where entire order is done
     public function onCaptured($response)
     {
-        $order = $this->owner->Order();
-        if ($order->exists() && $order->Status == 'Complete') {
-            OrderProcessor::create($order)->completePayment();
-        }
+        //$order = $this->owner->Order();
+        //if ($order->exists()) {
+            //OrderProcessor::create($order)->completePayment();
+        //}
     }
     
     public function onAuthorized($response)
