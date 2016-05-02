@@ -118,10 +118,15 @@ class OrderProcessor
 
 		$numPayments--;
 
+		$transactionId = strtoupper(i18n::get_lang_from_locale(i18n::get_locale())) . $this->order->Reference . ($numPayments > 0 ? '-' . $numPayments : '');
+		if(Director::isDev()){
+			$transactionId .= Member::currentUser() ? '-' . Member::currentUserID() : '';
+		}
+
         return array_merge(
             $customData,
             array(
-				'transactionId' => strtoupper(i18n::get_lang_from_locale(i18n::get_locale())) . $this->order->Reference . ($numPayments > 0 ? '-' . $numPayments : '') . (Member::currentUser() ? '-' . Member::currentUserID() : ''),
+				'transactionId' => $transactionId,
                 'firstName'        => $this->order->FirstName,
                 'lastName'         => $this->order->Surname,
                 'email'            => $this->order->Email,
