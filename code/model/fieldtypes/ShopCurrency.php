@@ -28,6 +28,22 @@ class ShopCurrency extends Currency
 
         return $val;
     }
+    
+    public function Whole()
+	{
+		$val = $this->config()->currency_symbol .
+			number_format(
+				abs($this->value),
+				0,
+				self::config()->decimal_delimiter,
+				self::config()->thousand_delimiter
+			);
+		if ($this->value < 0) {
+			return sprintf(self::config()->negative_value_format, $val);
+		}
+
+		return $val;
+	}
 
     public function forTemplate()
     {
