@@ -231,7 +231,7 @@ class Order extends DataObject
         $filters['DateFrom'] = GreaterThanFilter::create('Placed');
         $filters['DateTo'] = LessThanFilter::create('Placed');
         $context->setFilters($filters);
-
+        $this->extend('updateDefaultSearchContext', $context);
         return $context;
     }
 
